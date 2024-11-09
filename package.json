@@ -1,6 +1,6 @@
 {
   "name": "excel-merge-app",
-  "homepage": "https://{유저이름}.github.io/{저장소이름}",
+  "homepage": "https://{daechan-jo}.github.io/{excel-merge-app}",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,7 +8,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+		"predeploy": "npm run build",
+		"deploy": "gh-pages -d build"
   },
   "private": true,
   "dependencies": {
