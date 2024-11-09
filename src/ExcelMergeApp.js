@@ -5,7 +5,6 @@ function ExcelMergeApp() {
 	const [onchData, setOnchData] = useState([]);
 	const [coupangData, setCoupangData] = useState([]);
 
-	// 파일 업로드 후 데이터 파싱 및 정리
 	const handleFileUpload = (e, setData, type) => {
 		const file = e.target.files[0];
 		const reader = new FileReader();
@@ -16,17 +15,12 @@ function ExcelMergeApp() {
 			const sheet = workbook.Sheets[sheetName];
 			const jsonData = XLSX.utils.sheet_to_json(sheet);
 
-			// 파일 유형에 따라 필요 없는 컬럼 제거
 			const cleanedData = jsonData.map(row => {
 				if (type === "onch") {
-					const {
-						온채널주문코드, 상품명, 상품코드, 옵션, 수량, 가격
-					} = row;
+					const { 온채널주문코드, 상품명, 상품코드, 옵션, 수량, 가격 } = row;
 					return { 온채널주문코드, 온채널상품명: 상품명, 온채널상품코드: 상품코드, 옵션, 수량, 가격 };
 				} else if (type === "coupang") {
-					const {
-						주문번호, 상품번호, 판매금액, 판매배송비, 취소금액, 취소배송비
-					} = row;
+					const { 주문번호, 상품번호, 판매금액, 판매배송비, 취소금액, 취소배송비 } = row;
 					return { 쿠팡주문번호: 주문번호, 쿠팡상품번호: 상품번호, 판매금액, 판매배송비, 취소금액, 취소배송비 };
 				}
 				return row;
@@ -37,34 +31,40 @@ function ExcelMergeApp() {
 		reader.readAsArrayBuffer(file);
 	};
 
-	// 데이터 병합 및 계산 로직
 	const mergeAndDownload = () => {
-		const mergedData = onchData.map((onchRow) => {
-			const coupangRow = coupangData.find((c) => c.쿠팡주문번호 === onchRow.온채널주문코드);
-			if (!coupangRow) return null;
+		const maxLength = Math.max(onchData.length, coupangData.length);
+		const mergedData = [];
 
-			const 판매금액 = coupangRow.판매금액 || 0;
-			const 판매배송비 = coupangRow.판매배송비 || 0;
+		for (let i = 0; i < maxLength; i++) {
+			const { 온채널주문코드, 온채널상품명: 상품명, 온채널상품코드: 상품코드, 옵션, 수량, 가격 } = onchData[i] || {};
+			const { 쿠팡주문번호: 주문번호, 쿠팡상품번호: 상품번호, 판매금액, 판매배송비, 취소금액, 취소배송비 } = coupangData[i] || {};
+
 			const 수수료 = 판매금액 * 0.108;
-			const 순이익 = (onchRow.가격 - 판매금액 - 수수료 + 판매배송비) * onchRow.수량;
+			const 순이익 = (가격 - 판매금액 - 수수료 + 판매배송비) * (수량 || 1);
+			const 판매 = 판매금액 + 판매배송비
 
-			return {
-				...onchRow,
-				쿠팡주문번호: coupangRow.쿠팡주문번호,
-				쿠팡상품번호: coupangRow.쿠팡상품번호,
-				판매금액,
-				판매배송비,
-				취소금액: coupangRow.취소금액,
-				취소배송비: coupangRow.취소배송비,
+			const mergedRow = {
+				온채널주문코드,
+				온채널상품명: 상품명,
+				온채널상품코드: 상품코드,
+				옵션,
+				쿠팡주문번호: 주문번호,
+				쿠팡상품번호: 상품번호,
+				수량,
+				도매: 가격,
+				판매: 판매,
+				취소금액,
+				취소배송비,
 				예상수수료: 수수료,
 				순이익,
 			};
-		}).filter(row => row);
 
-		// 전체 합계 행 추가
+			mergedData.push(mergedRow);
+		}
+
 		const summaryRow = mergedData.reduce((acc, row) => {
 			Object.keys(row).forEach((key) => {
-				if (typeof row[key] === "number") {
+				if (typeof row[key] === "number" && key !== "쿠팡주문번호") {
 					acc[key] = (acc[key] || 0) + row[key];
 				}
 			});
@@ -72,8 +72,32 @@ function ExcelMergeApp() {
 		}, { 온채널주문코드: "총합계" });
 		mergedData.push(summaryRow);
 
-		// 엑셀 파일로 변환 및 다운로드
 		const worksheet = XLSX.utils.json_to_sheet(mergedData);
+
+		// 스타일 적용
+		const range = XLSX.utils.decode_range(worksheet["!ref"]);
+
+		// 마지막 행(요약 행)에 스타일 추가
+		for (let C = range.s.c; C <= range.e.c; ++C) {
+			const cell = worksheet[XLSX.utils.encode_cell({ r: range.e.r, c: C })];
+			if (cell) {
+				cell.s = {
+					fill: { fgColor: { rgb: "FFFF00" } },  // 노란색 배경
+					font: { bold: true }                    // 굵은 글씨
+				};
+			}
+		}
+
+		// 마지막 컬럼에 스타일 적용
+		for (let R = range.s.r; R <= range.e.r; ++R) {
+			const cell = worksheet[XLSX.utils.encode_cell({ r: R, c: range.e.c })];
+			if (cell) {
+				cell.s = {
+					fill: { fgColor: { rgb: "ADD8E6" } }    // 연한 파란색 배경
+				};
+			}
+		}
+
 		const workbook = XLSX.utils.book_new();
 		XLSX.utils.book_append_sheet(workbook, worksheet, "MergedData");
 		XLSX.writeFile(workbook, "MergedData.xlsx");
@@ -100,5 +124,3 @@ function ExcelMergeApp() {
 }
 
 export default ExcelMergeApp;
-
-

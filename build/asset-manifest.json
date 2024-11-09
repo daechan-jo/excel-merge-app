@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/%7Bexcel-merge-app%7D/static/js/main.7d7d0081.js",
+    "index.html": "/%7Bexcel-merge-app%7D/index.html",
+    "main.7d7d0081.js.map": "/%7Bexcel-merge-app%7D/static/js/main.7d7d0081.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.7d7d0081.js"
+  ]
+}
