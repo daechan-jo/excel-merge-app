@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/excel-merge-app/static/css/main.d33882db.css",
+    "main.js": "/excel-merge-app/static/js/main.96b71c84.js",
+    "index.html": "/excel-merge-app/index.html",
+    "main.d33882db.css.map": "/excel-merge-app/static/css/main.d33882db.css.map",
+    "main.96b71c84.js.map": "/excel-merge-app/static/js/main.96b71c84.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.d33882db.css",
+    "static/js/main.96b71c84.js"
+  ]
+}
