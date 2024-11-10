@@ -1,0 +1,132 @@
+/* 전체 화면 스타일 설정 */
+body, html {
+	margin: 0;
+	padding: 0;
+	font-family: "Press Start 2P", monospace;
+	background-color: #f0f0f0;
+	color: #333;
+	width: 100%;
+	height: 100%;
+	transition: background-color 0.3s, color 0.3s;
+}
+
+/* 다크 모드 스타일 */
+.dark-mode {
+	background-color: #1e1e1e;
+	color: #e0e0e0;
+}
+
+/* 앱 컨테이너 스타일 */
+.app-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	background-color: inherit;
+	color: inherit;
+	padding: 20px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	border-radius: 8px;
+}
+
+/* 다크 모드 버튼 스타일 */
+.toggle-mode {
+	background: #d3d3d3;
+	border: 2px solid #333;
+	color: #333;
+	font-weight: bold;
+	margin-bottom: 1rem;
+	padding: 10px 20px;
+	cursor: pointer;
+	transition: all 0.3s;
+	font-family: "Press Start 2P", monospace;
+}
+
+.dark-mode .toggle-mode {
+	background: #6d6dff;
+	color: #fff;
+	border: 2px solid #999;
+}
+
+/* 파일 업로드 및 버튼 스타일 */
+.file-input p {
+	margin: 10px 0;
+}
+
+input[type="file"] {
+	display: inline-block;
+	font-family: "Press Start 2P", monospace;
+	margin-bottom: 10px;
+}
+
+.merge-btn,
+.download-btn {
+	background-color: #ffcc00;
+	color: #333;
+	font-weight: bold;
+	border: 2px solid #333;
+	cursor: pointer;
+	margin: 0.5rem;
+	padding: 10px 20px;
+	border-radius: 4px;
+	font-family: "Press Start 2P", monospace;
+	transition: background-color 0.3s;
+}
+
+.merge-btn:hover,
+.download-btn:hover {
+	background-color: #333;
+	color: #ffcc00;
+}
+
+/* 미리보기 테이블 스타일 */
+.preview-container {
+	margin-top: 1rem;
+	width: 100%;
+	overflow-x: auto;
+	background: inherit;
+	color: inherit;
+	border-radius: 8px;
+}
+
+.preview-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: auto;
+	font-size: 14px;
+	border: 2px solid #333;
+	background-color: #fff;
+	color: #333;
+}
+
+.preview-table th,
+.preview-table td {
+	border: 1px solid #333;
+	padding: 12px;
+	text-align: center;
+	font-family: "Press Start 2P", monospace;
+}
+
+/* 다크 모드 테이블 스타일 */
+.dark-mode .preview-table {
+	background-color: #333;
+	color: #fff;
+}
+
+.dark-mode .preview-table th,
+.dark-mode .preview-table td {
+	border-color: #666;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 600px) {
+	.app-container {
+		padding: 10px;
+	}
+	.preview-table th,
+	.preview-table td {
+		padding: 8px;
+		font-size: 10px;
+	}
+}

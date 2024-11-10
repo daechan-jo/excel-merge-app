@@ -1,10 +1,13 @@
 {
   "files": {
-    "main.js": "/%7Bexcel-merge-app%7D/static/js/main.7d7d0081.js",
+    "main.css": "/%7Bexcel-merge-app%7D/static/css/main.d33882db.css",
+    "main.js": "/%7Bexcel-merge-app%7D/static/js/main.96b71c84.js",
     "index.html": "/%7Bexcel-merge-app%7D/index.html",
-    "main.7d7d0081.js.map": "/%7Bexcel-merge-app%7D/static/js/main.7d7d0081.js.map"
+    "main.d33882db.css.map": "/%7Bexcel-merge-app%7D/static/css/main.d33882db.css.map",
+    "main.96b71c84.js.map": "/%7Bexcel-merge-app%7D/static/js/main.96b71c84.js.map"
   },
   "entrypoints": [
-    "static/js/main.7d7d0081.js"
+    "static/css/main.d33882db.css",
+    "static/js/main.96b71c84.js"
   ]
 }
