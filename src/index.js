@@ -1,11 +1,11 @@
-// src/index.js
 import React from "react";
 import ReactDOM from "react-dom";
+import { HashRouter } from "react-router-dom";
 import ExcelMergeApp from "./ExcelMergeApp";
 
 ReactDOM.render(
-	<React.StrictMode>
+	<HashRouter>
 		<ExcelMergeApp />
-	</React.StrictMode>,
+	</HashRouter>,
 	document.getElementById("root")
 );

@@ -55,6 +55,7 @@ function ExcelMergeApp() {
 			const 수수료 =  Math.round(판매금액 * 0.108)
 			const 판매 = 판매금액 + 판매배송비;
 			const 순이익 = 판매 - 가격 - 수수료 * (수량 || 1);
+			const 마진율 = Math.round(순이익 / 판매 * 100)
 
 			const mergedRow = {
 				온채널주문코드,
@@ -70,6 +71,7 @@ function ExcelMergeApp() {
 				취소배송비,
 				예상수수료: 수수료,
 				순이익,
+				마진율,
 			};
 
 			mergedData.push(mergedRow);
@@ -90,6 +92,12 @@ function ExcelMergeApp() {
 			취소배송비: mergedData.reduce((sum, row) => sum + (row.취소배송비 || 0), 0),
 			예상수수료: mergedData.reduce((sum, row) => sum + (row.예상수수료 || 0), 0),
 			순이익: mergedData.reduce((sum, row) => sum + (row.순이익 || 0), 0),
+			마진율: parseFloat(
+				(
+					mergedData.reduce((sum, row) => sum + (row.순이익 / row.판매 || 0),0) /
+					mergedData.length
+				).toFixed(2)
+			),
 		};
 		mergedData.push(summaryRow);
 
@@ -97,9 +105,35 @@ function ExcelMergeApp() {
 	};
 
 	const downloadMergedData = () => {
-		mergeData(); // 병합 데이터를 미리보기와 동시에 다운로드에 사용
+		mergeData();
 
 		const worksheet = XLSX.utils.json_to_sheet(mergedPreview);
+
+		const columnHeaders = Object.keys(mergedPreview[0]);
+		const 수량Index = columnHeaders.indexOf("수량") + 1;
+		const 도매Index = columnHeaders.indexOf("도매") + 1;
+		const 판매Index = columnHeaders.indexOf("판매") + 1;
+		const 취소금액Index = columnHeaders.indexOf("취소금액") + 1
+		const 취소배송비Index = columnHeaders.indexOf("취소배송비") + 1
+		const 예상수수료Index = columnHeaders.indexOf("예상수수료") + 1;
+		const 순이익Index = columnHeaders.indexOf("순이익") + 1;
+		const 마진율Index = columnHeaders.indexOf("마진율") + 1;
+		const lastDataRow = mergedPreview.length;
+
+		worksheet[`G${lastDataRow + 1}`] = { f: `SUM(G2:G${lastDataRow})` };
+		worksheet[`H${lastDataRow + 1}`] = { f: `SUM(H2:H${lastDataRow})` };
+		worksheet[`I${lastDataRow + 1}`] = { f: `SUM(I2:I${lastDataRow})` };
+		worksheet[`J${lastDataRow + 1}`] = { f: `SUM(J2:J${lastDataRow})` };
+		worksheet[`K${lastDataRow + 1}`] = { f: `SUM(K2:K${lastDataRow})` };
+		worksheet[`L${lastDataRow + 1}`] = { f: `SUM(L2:L${lastDataRow})` };
+		worksheet[`M${lastDataRow + 1}`] = { f: `SUM(M2:M${lastDataRow})` };
+
+		for (let i = 2; i <= lastDataRow; i++) {
+			worksheet[`N${i}`] = { f: `IF(I${i}<>0, ROUND((M${i}/I${i})*100, 2), 0)` }; // (순이익 / 판매) * 100
+		}
+
+		worksheet[`N${lastDataRow + 1}`] = { f: `AVERAGE(N2:N${lastDataRow})` }; // 마진율의 평균
+
 		const workbook = XLSX.utils.book_new();
 		XLSX.utils.book_append_sheet(workbook, worksheet, "MergedData");
 		XLSX.writeFile(workbook, "MergedData.xlsx");
